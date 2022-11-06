@@ -1,0 +1,87 @@
+---
+title: "simulation"
+author: "Yuchen Hua"
+date: "2022-11-06"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+set.seed(1)
+```
+
+## Let's simulation something
+```{r}
+sim_mean_sd = function(samp_size, mu = 3, sigma = 4) {
+  
+  sim_data = tibble(
+    x = rnorm(n = samp_size, mean = mu, sd = sigma),
+  )
+  
+  sim_data %>% 
+    summarize(
+      mean = mean(x),
+      sd = sd(x)
+    )
+}
+
+```
+
+I can simulate by running this line 
+```{r}
+sim_mean_sd(30)
+```
+
+## I can simulate a lot
+```{r}
+output = vector("list", length = 100)
+
+for(i in 1:100) {
+  output[[i]] = sim_mean_sd(samp_size = 30)
+}
+
+bind_rows(output)
+```
+
+Let's use a loop function.
+```{r}
+sim_result = 
+  rerun(100, sim_mean_sd(samp_size = 30)) %>%
+  bind_rows()
+```
+
+Let's look at results...
+```{r}
+sim_result %>%
+  ggplot(aes(x = mean)) + geom_density()
+
+sim_result %>%
+  summarize(
+    avg_samp_mean = mean(mean),
+    sd_samp_mean = sd(mean)
+  )
+
+sim_result %>%
+  ggplot(aes(x=sd))+geom_density()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
